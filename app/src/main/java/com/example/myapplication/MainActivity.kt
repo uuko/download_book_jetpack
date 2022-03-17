@@ -1,23 +1,19 @@
 package com.example.myapplication
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -35,9 +31,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Conversation(
-                        SampleData.conversationSample
-                    )
+                    MyApp()
 //                    Greeting("aaa")
                 }
             }
@@ -47,9 +41,63 @@ class MainActivity : ComponentActivity() {
 
 data class Message(val author: String, val body: String)
 
+@Composable
+fun MyApp() {
+    detectingStatus()
+}
 
 @Composable
-fun Greeting(name: Message) {
+fun detectingStatus() {
+    var shouldShowOnboarding by rememberSaveable {
+        mutableStateOf(true)
+    }
+
+    if (shouldShowOnboarding) {
+        OnboardingScreen(OnContinueClicked = {
+            shouldShowOnboarding = false
+        })
+
+    } else {
+        Conversation(
+            List(1000) { "$it" }
+        )
+    }
+
+}
+
+@Composable
+fun OnboardingScreen(OnContinueClicked: () -> Unit) {
+
+
+    Surface() {
+        Column(
+            modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+
+        ) {
+            Text(text = "one")
+            Button(
+                onClick = OnContinueClicked,
+                modifier = Modifier.padding(vertical = 24.dp)
+            ) {
+                Text(text = "Continue")
+
+            }
+
+        }
+
+    }
+}
+
+@Preview(showBackground = true, widthDp = 320, heightDp = 320)
+@Composable
+fun OnboardingPreview() {
+    OnboardingScreen({})
+}
+
+
+@Composable
+fun Greeting(name: String) {
     var expanded by remember { mutableStateOf(false) }
     val extraPadding = if (expanded) 48.dp else 8.dp
     Log.e("Greeting", "Greeting: $expanded")
@@ -68,12 +116,13 @@ fun Greeting(name: Message) {
 
 
         Column(
-            modifier = Modifier.padding(bottom = extraPadding)
-                    .weight(1f)
+            modifier = Modifier
+                .padding(bottom = extraPadding)
+                .weight(1f)
         ) {
-            Text(text = name.author, color = MaterialTheme.colors.secondaryVariant)
+            Text(text = name, color = MaterialTheme.colors.secondaryVariant)
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = name.body)
+            Text(text = name)
             if (expanded) {
                 Text(
                     text = ("Composem ipsum color sit lazy, " +
@@ -94,10 +143,10 @@ fun Greeting(name: Message) {
 
 
 @Composable
-fun Conversation(messages: List<Message>) {
+fun Conversation(messages: List<String> = List(1000) { "$it" }) {
     LazyColumn {
         items(messages) { message ->
-            Greeting(message)
+            Greeting(name = message)
         }
     }
 }
@@ -177,7 +226,7 @@ object SampleData {
 @Composable
 fun PreviewConversation() {
     Conversation(
-        SampleData.conversationSample
+        List(1000) { "$it" }
     )
 
 }
@@ -185,7 +234,7 @@ fun PreviewConversation() {
 @Preview
 @Composable
 fun PreviewMessageCard() {
-    Greeting(Message("Android", "Jetpack Compose"))
+    Greeting("Android")
 }
 
 

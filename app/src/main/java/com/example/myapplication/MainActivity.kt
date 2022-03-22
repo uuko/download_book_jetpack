@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -12,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,11 +21,29 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.myapplication.model.Artical
+import com.example.myapplication.repository.BookDownloadRepository
 import com.example.myapplication.ui.theme.MyApplicationTheme
+import com.example.myapplication.viewmodel.BookDownloadViewModel
+import com.example.myapplication.viewmodel.BookDownloadViewModelFactory
 
 class MainActivity : ComponentActivity() {
+    private val factory = BookDownloadViewModelFactory(BookDownloadRepository())
+    private val viewModel: BookDownloadViewModel by viewModels {
+        factory
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        viewModel.getAritcal()
+//
+//        viewModel.articalData.observe(this) {
+//            Log.e("onCreate", "articalData: ${it.title}")
+//
+////            viewModel.getAritcal()
+//        }
+
+
         setContent {
             MyApplicationTheme {
                 // A surface container using the 'background' color from the theme
@@ -31,7 +51,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    MyApp()
+                    MyApp(viewModel)
 //                    Greeting("aaa")
                 }
             }
@@ -42,12 +62,12 @@ class MainActivity : ComponentActivity() {
 data class Message(val author: String, val body: String)
 
 @Composable
-fun MyApp() {
-    detectingStatus()
+fun MyApp(viewModel: BookDownloadViewModel) {
+    detectingStatus(viewModel)
 }
 
 @Composable
-fun detectingStatus() {
+fun detectingStatus(viewModel: BookDownloadViewModel) {
     var shouldShowOnboarding by rememberSaveable {
         mutableStateOf(true)
     }
@@ -55,7 +75,8 @@ fun detectingStatus() {
     if (shouldShowOnboarding) {
         OnboardingScreen(OnContinueClicked = {
             shouldShowOnboarding = false
-        })
+
+        }, viewModel)
 
     } else {
         Conversation(
@@ -66,33 +87,50 @@ fun detectingStatus() {
 }
 
 @Composable
-fun OnboardingScreen(OnContinueClicked: () -> Unit) {
+fun OnboardingScreen(OnContinueClicked: () -> Unit, viewModel: BookDownloadViewModel) {
+//    val items: List<Artical> by view.todoItems.observeAsState(listOf())
 
+    val items =viewModel.articalData.observeAsState()
+    val ii= remember {
+        items
+    }
+//    Surface() {
+    Column(
+        modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
 
-    Surface() {
-        Column(
-            modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-
+    ) {
+//        val _artical: Artical by  viewModel.articalData.observeAsState(Artical("aaaaaa", "", "aaaaa", "", listOf()))
+////        val artical :Artical by rememberSaveable  {
+////            viewModel.articalData.observeAsState(Artical("aaaaaa", "", "aaaaa", "", listOf()))
+////        }
+//        Log.e("onCreate", "OnboardingScreen: ${_artical.title}")
+//        Text(_artical.author + "!!!")
+        Text("!!!")
+        Button(
+            onClick = OnContinueClicked,
+            modifier = Modifier.padding(vertical = 24.dp)
         ) {
-            Text(text = "one")
-            Button(
-                onClick = OnContinueClicked,
-                modifier = Modifier.padding(vertical = 24.dp)
-            ) {
-                Text(text = "Continue")
-
-            }
+            Text(text = "Continue")
 
         }
 
+//        var text by remember { mutableStateOf ("Prev Text") }
+//        Log.e("onCreate", "OnboardingScreen: $text" )
+//        Text(text)
+//        Button(onClick = { text = "Updated Text" }){
+//            Text("Update The Text")
+//        }
+
     }
+
+//    }
 }
 
 @Preview(showBackground = true, widthDp = 320, heightDp = 320)
 @Composable
 fun OnboardingPreview() {
-    OnboardingScreen({})
+    OnboardingScreen({}, viewModel = BookDownloadViewModel(BookDownloadRepository()))
 }
 
 

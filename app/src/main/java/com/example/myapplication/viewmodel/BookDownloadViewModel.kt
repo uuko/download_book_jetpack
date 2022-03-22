@@ -1,17 +1,13 @@
 package com.example.myapplication.viewmodel
 
+import android.content.Context
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.model.Artical
 import com.example.myapplication.model.BookAllSize
 import com.example.myapplication.model.ProgressData
 import com.example.myapplication.repository.BookDownloadRepository
-import io.reactivex.CompletableObserver
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 
 class BookDownloadViewModel(private val dataModel: BookDownloadRepository) : ViewModel() {
 
@@ -34,6 +30,12 @@ class BookDownloadViewModel(private val dataModel: BookDownloadRepository) : Vie
         Log.e("onCreate", "VM == parseNovelOneBookAndSave: ")
         dataModel.parseNovelOneBookAndSave(wh)
     }
+
+
+    fun parseLofterAndSave(url: String = "",context: Context){
+        dataModel.parseLofterAndSave(url,context)
+    }
+
 
 
 

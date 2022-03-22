@@ -33,14 +33,16 @@ class BookDownloadActivity : AppCompatActivity() {
             viewModel.parseNovelOneBookAndSave(it.list)
         }
         viewModel.progress.observe(this) {
+            loadText.visibility = View.VISIBLE
             if (it.show) {
                 progress.visibility = View.VISIBLE
-                loadText.visibility = View.VISIBLE
-                loadText.text = it.text
+
+
             } else {
                 progress.visibility = View.GONE
-                loadText.visibility = View.GONE
+//                loadText.visibility = View.GONE
             }
+            loadText.text = it.text
         }
 
 
@@ -54,9 +56,11 @@ class BookDownloadActivity : AppCompatActivity() {
                 //else if (url.split("https://")[1].contains("www.sto.cx")) {
 //                    var mUrl = url.replace("mbook", "book")
 //                    parseStoAndSave(url)
-//                } else {
-//                    parseLofterAndSave(url)
 //                }
+                //
+                else {
+                    viewModel.parseLofterAndSave(url,this)
+                }
             }
         }
 

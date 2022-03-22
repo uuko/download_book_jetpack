@@ -1,11 +1,13 @@
 package com.example.myapplication.repository
 
+import android.content.Context
 import android.os.Environment
 import android.os.Environment.DIRECTORY_DOWNLOADS
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.myapplication.mgr.CzBookParser
+import com.example.myapplication.mgr.LofterParser
+import com.example.myapplication.mgr.PdfItextUtil
 import com.example.myapplication.model.Artical
 import com.example.myapplication.model.BookAllSize
 import com.example.myapplication.model.ProgressData
@@ -31,6 +33,52 @@ class BookDownloadRepository {
     private var _progress = MutableLiveData(ProgressData())
     val progress: MutableLiveData<ProgressData> = _progress
 
+    fun parseLofterAndSave(url: String, context: Context) {
+        Log.e("onCreate", "parseLofterAndSave: $url" )
+        LofterParser().getLofterParserData(url)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : SingleObserver<Artical> {
+                override fun onSuccess(t: Artical) {
+                    Log.d("onCreate", "parseLofterAndSave$t")
+                    _artical.postValue(t)
+//                    saveToWordRx(t, context)
+                    saveToFileRx(t)
+
+                    _progress.postValue(
+                        ProgressData(
+                            text = "完成",
+                            show = false
+                        )
+                    )
+
+
+                }
+
+                override fun onSubscribe(d: Disposable) {
+                    Log.d("onCreate", "parseLofterAndSave onSubscribe")
+                    _progress.postValue(
+                        ProgressData(
+                            text = "parseLofterAndSave 下載中",
+                            show = true
+                        )
+                    )
+                }
+
+                override fun onError(e: Throwable) {
+                    Log.d("onCreate", "parseLofterAndSave onError$e")
+                    _progress.postValue(
+                        ProgressData(
+                            text = "parseLofterAndSave 下載失敗",
+                            show = true
+                        )
+                    )
+                }
+
+
+            })
+
+    }
 
     fun parseCzBooksAndSave(url: String = "") {
         Log.e("onCreate", "parseCzBooksAndSave: $url")
@@ -40,7 +88,7 @@ class BookDownloadRepository {
             .subscribe(object : SingleObserver<Artical> {
                 override fun onSuccess(t: Artical) {
                     Log.d("onCreate parseCzBooks", "onSuccess$t")
-                    artical.postValue(t)
+                    _artical.postValue(t)
                     _progress.postValue(
                         ProgressData(
                             text = "完成",
@@ -120,6 +168,7 @@ class BookDownloadRepository {
             })
     }
 
+
     fun parseNovelOneBookAndSave(wh: List<String>, nowInt: Int = 0) {
         var finalInt = nowInt;
         var isEnd = false
@@ -129,7 +178,7 @@ class BookDownloadRepository {
             .subscribe(object : SingleObserver<Artical> {
                 override fun onSuccess(ar: Artical) {
                     Log.d("onCreate", "onSuccess OneBookAndSave $wh")
-                    artical.postValue(ar)
+                    _artical.postValue(ar)
                     when {
                         finalInt < wh.size - 2 -> {
                             finalInt++
@@ -260,6 +309,79 @@ class BookDownloadRepository {
                 }
             }
         }
+    }
+
+
+    private fun saveToWordRx(t: Artical, context: Context) {
+        saveToWord(t, context)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : CompletableObserver {
+                override fun onSubscribe(d: Disposable) {
+                    Log.d("onCreate", "saveToWordRx  onSubscribe")
+                    _progress.postValue(
+                        ProgressData(
+                            text = "儲存中",
+                            show = true
+                        )
+                    )
+                }
+
+                override fun onError(e: Throwable) {
+                    Log.d("onCreate", "onError  saveToWordRx$e")
+                    _progress.postValue(
+                        ProgressData(
+                            text = "儲存失敗 $e",
+                            show = false
+                        )
+                    )
+                }
+
+                override fun onComplete() {
+                    Log.d("onCreate", "onComplete  saveToWordRx")
+                    _progress.postValue(
+                        ProgressData(
+                            text = "儲存成功",
+                            show = false
+                        )
+                    )
+                }
+
+            })
+    }
+
+    private fun saveToWord(t: Artical, context: Context): Completable {
+        return Completable.create {
+            run {
+
+                var pdfItextUtil: PdfItextUtil? = null
+                try {
+                    val filePath: String =
+                        (Environment.getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS).path) + "/books/"
+
+                    Log.e("onCreate", "saveToWord: $t", )
+                    pdfItextUtil =
+                        PdfItextUtil(context, filePath + t.title + ".pdf")
+                            .addTitleToPdf(t.title)
+                            .addTextToPdf(t.author)
+                            .addTextToPdf(t.content)
+//                        .addImageToPdfCenterH(t.imgUrl[0], 160f, 160f)
+                    for (i in 0 until t.imgUrl.size) {
+                        pdfItextUtil?.addImageToPdfCenterH(t.imgUrl[i]);
+                    }
+//                        .addImageToPdfCenterH(getImageFilePath(), 160f, 160f)
+//                        .addTextToPdf(getTvString(tv_content))
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    it.onError(e)
+                } finally {
+                    pdfItextUtil?.close()
+                    it.onComplete()
+                }
+
+            }
+        }
+
     }
 
 //    saveToFile(t)

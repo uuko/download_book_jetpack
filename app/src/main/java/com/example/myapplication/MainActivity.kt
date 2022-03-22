@@ -40,10 +40,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.parseNovelAllBooksAndSave("https://czbooks.net/n/cpgb24p")
-        viewModel.bookAllSize.observe(this) {
-            viewModel.parseNovelOneBookAndSave(it.list)
-        }
+//        viewModel.parseNovelAllBooksAndSave("https://czbooks.net/n/cpgb24p")
+//        viewModel.bookAllSize.observe(this) {
+//            viewModel.parseNovelOneBookAndSave(it.list)
+//        }
 //
 //        viewModel.articalData.observe(this) {
 //            Log.e("onCreate", "articalData: ${it.title}")

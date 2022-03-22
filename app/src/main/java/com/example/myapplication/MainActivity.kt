@@ -19,7 +19,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,7 +40,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        viewModel.getAritcal()
+        viewModel.parseNovelAllBooksAndSave("https://czbooks.net/n/cpgb24p")
+        viewModel.bookAllSize.observe(this) {
+            viewModel.parseNovelOneBookAndSave(it.list)
+        }
 //
 //        viewModel.articalData.observe(this) {
 //            Log.e("onCreate", "articalData: ${it.title}")
@@ -91,12 +96,21 @@ fun detectingStatus(viewModel: BookDownloadViewModel) {
 
 @Composable
 fun OnboardingScreen(OnContinueClicked: () -> Unit, viewModel: BookDownloadViewModel) {
-//    val items: List<Artical> by view.todoItems.observeAsState(listOf())
-
-    val items = viewModel.articalData.observeAsState()
-    val ii = remember {
-        items
+    val artical: Artical by viewModel.articalData.observeAsState(
+        Artical(
+            "",
+            "",
+            "",
+            "",
+            "",
+            listOf()
+        )
+    )
+    val articalData = remember {
+        mutableStateOf(artical)
     }
+
+
 //    Surface() {
     Column(
         modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
@@ -107,9 +121,9 @@ fun OnboardingScreen(OnContinueClicked: () -> Unit, viewModel: BookDownloadViewM
 ////        val artical :Artical by rememberSaveable  {
 ////            viewModel.articalData.observeAsState(Artical("aaaaaa", "", "aaaaa", "", listOf()))
 ////        }
-//        Log.e("onCreate", "OnboardingScreen: ${_artical.title}")
+        Log.e("onCreate", "OnboardingScreen: ${artical.title}")
 //        Text(_artical.author + "!!!")
-        Text("!!!")
+        Text(text = articalData.component1().title, color = Color.White)
         Button(
             onClick = OnContinueClicked,
             modifier = Modifier.padding(vertical = 24.dp)

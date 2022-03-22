@@ -129,6 +129,7 @@ class BookDownloadRepository {
             .subscribe(object : SingleObserver<Artical> {
                 override fun onSuccess(ar: Artical) {
                     Log.d("onCreate", "onSuccess OneBookAndSave $wh")
+                    artical.postValue(ar)
                     when {
                         finalInt < wh.size - 2 -> {
                             finalInt++

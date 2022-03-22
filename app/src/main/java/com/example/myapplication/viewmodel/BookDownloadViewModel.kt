@@ -16,7 +16,7 @@ import io.reactivex.schedulers.Schedulers
 class BookDownloadViewModel(private val dataModel: BookDownloadRepository) : ViewModel() {
 
 
-    val articalData: LiveData<Artical> = dataModel.artical
+    val articalData: MutableLiveData<Artical> = dataModel.artical
     val progress: MutableLiveData<ProgressData> = dataModel.progress
     val bookAllSize: MutableLiveData<BookAllSize> = dataModel.bookAllSize
 

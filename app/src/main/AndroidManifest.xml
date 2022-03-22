@@ -17,7 +17,7 @@
         <activity
             android:name=".view.BookDownloadActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light"></activity>
+            android:theme="@style/Theme.AppCompat.DayNight"></activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"

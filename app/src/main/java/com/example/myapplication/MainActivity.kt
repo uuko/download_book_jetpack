@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -18,12 +19,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.model.Artical
 import com.example.myapplication.repository.BookDownloadRepository
 import com.example.myapplication.ui.theme.MyApplicationTheme
+import com.example.myapplication.view.BookDownloadActivity
 import com.example.myapplication.viewmodel.BookDownloadViewModel
 import com.example.myapplication.viewmodel.BookDownloadViewModelFactory
 
@@ -90,8 +93,8 @@ fun detectingStatus(viewModel: BookDownloadViewModel) {
 fun OnboardingScreen(OnContinueClicked: () -> Unit, viewModel: BookDownloadViewModel) {
 //    val items: List<Artical> by view.todoItems.observeAsState(listOf())
 
-    val items =viewModel.articalData.observeAsState()
-    val ii= remember {
+    val items = viewModel.articalData.observeAsState()
+    val ii = remember {
         items
     }
 //    Surface() {
@@ -113,6 +116,17 @@ fun OnboardingScreen(OnContinueClicked: () -> Unit, viewModel: BookDownloadViewM
         ) {
             Text(text = "Continue")
 
+        }
+        val context = LocalContext.current
+        Button(onClick = {
+            context.startActivity(
+                Intent(
+                    context,
+                    BookDownloadActivity::class.java
+                )
+            )
+        }) {
+            Text(text = "Jump")
         }
 
 //        var text by remember { mutableStateOf ("Prev Text") }

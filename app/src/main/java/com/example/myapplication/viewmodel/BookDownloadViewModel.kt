@@ -17,23 +17,23 @@ class BookDownloadViewModel @Inject constructor(private val dataModel: BookDownl
     val progress: MutableLiveData<ProgressData> = dataModel.progress
     val bookAllSize: MutableLiveData<BookAllSize> = dataModel.bookAllSize
 
-    fun parseCzBooksAndSave(url: String = "") {
+    fun parseCzBooksAndSave(url: String = "",folder:String="book") {
         Log.e("onCreate", "getAritcal: ")
         dataModel.parseCzBooksAndSave(url)
     }
 
-    fun parseNovelAllBooksAndSave(url: String = "") {
+    fun parseNovelAllBooksAndSave(url: String = "",folder:String="book") {
         Log.e("onCreate", "VM == parseNovelAllBooksAndSave: ")
         dataModel.parseNovelAllBooksAndSave(url = url)
     }
 
-    fun parseNovelOneBookAndSave(wh: List<String>) {
+    fun parseNovelOneBookAndSave(wh: List<String>,folder:String="book") {
         Log.e("onCreate", "VM == parseNovelOneBookAndSave: ")
         dataModel.parseNovelOneBookAndSave(wh)
     }
 
 
-    fun parseLofterAndSave(url: String = "",context: Context){
+    fun parseLofterAndSave(url: String = "",context: Context,folder:String="lofter"){
         dataModel.parseLofterAndSave(url,context)
     }
 

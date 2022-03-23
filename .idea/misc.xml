@@ -4,7 +4,14 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/uuko/Desktop/own_project/dowload_book_jetpack/app/src/main/res/layout/activity_book_download.xml" value="0.21920289855072464" />
-        <entry key="..\:/Users/uuko/Desktop/own_project/download_book_jetpack/app/src/main/res/layout/activity_book_download.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/uuko/Desktop/own_project/download_book_jetpack/app/src/main/res/drawable/background_gradient_0.xml" value="0.161" />
+        <entry key="..\:/Users/uuko/Desktop/own_project/download_book_jetpack/app/src/main/res/drawable/bg_edittext.xml" value="0.1" />
+        <entry key="..\:/Users/uuko/Desktop/own_project/download_book_jetpack/app/src/main/res/drawable/bg_edittext_focused.xml" value="0.1" />
+        <entry key="..\:/Users/uuko/Desktop/own_project/download_book_jetpack/app/src/main/res/drawable/bg_edittext_normal.xml" value="0.1" />
+        <entry key="..\:/Users/uuko/Desktop/own_project/download_book_jetpack/app/src/main/res/drawable/btn_shape.xml" value="0.1" />
+        <entry key="..\:/Users/uuko/Desktop/own_project/download_book_jetpack/app/src/main/res/drawable/ic_close_black_24dp.xml" value="0.1" />
+        <entry key="..\:/Users/uuko/Desktop/own_project/download_book_jetpack/app/src/main/res/layout/activity_book_download.xml" value="0.4" />
+        <entry key="..\:/Users/uuko/Desktop/own_project/download_book_jetpack/app/src/main/res/layout/layout_floating_window.xml" value="0.1" />
       </map>
     </option>
   </component>

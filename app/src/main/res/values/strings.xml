@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="novel">小說網址</string>
+    <string name="download_one">下載單章</string>
+    <string name="download_all">下載全本</string>
+    <string name="folder">儲存位置</string>
+    <string name="download_us">download/book</string>
 </resources>

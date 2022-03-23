@@ -8,8 +8,9 @@ import com.example.myapplication.model.Artical
 import com.example.myapplication.model.BookAllSize
 import com.example.myapplication.model.ProgressData
 import com.example.myapplication.repository.BookDownloadRepository
+import javax.inject.Inject
 
-class BookDownloadViewModel(private val dataModel: BookDownloadRepository) : ViewModel() {
+class BookDownloadViewModel @Inject constructor(private val dataModel: BookDownloadRepository) : ViewModel() {
 
 
     val articalData: MutableLiveData<Artical> = dataModel.artical

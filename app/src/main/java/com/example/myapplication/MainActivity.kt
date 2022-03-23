@@ -33,10 +33,10 @@ import com.example.myapplication.viewmodel.BookDownloadViewModel
 import com.example.myapplication.viewmodel.BookDownloadViewModelFactory
 
 class MainActivity : ComponentActivity() {
-    private val factory = BookDownloadViewModelFactory(BookDownloadRepository())
-    private val viewModel: BookDownloadViewModel by viewModels {
-        factory
-    }
+//    private val factory = BookDownloadViewModelFactory(BookDownloadRepository())
+//    private val viewModel: BookDownloadViewModel by viewModels {
+//        factory
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    MyApp(viewModel)
+//                    MyApp(viewModel)
 //                    Greeting("aaa")
                 }
             }
@@ -158,7 +158,7 @@ fun OnboardingScreen(OnContinueClicked: () -> Unit, viewModel: BookDownloadViewM
 @Preview(showBackground = true, widthDp = 320, heightDp = 320)
 @Composable
 fun OnboardingPreview() {
-    OnboardingScreen({}, viewModel = BookDownloadViewModel(BookDownloadRepository()))
+//    OnboardingScreen({}, viewModel = BookDownloadViewModel(BookDownloadRepository()))
 }
 
 

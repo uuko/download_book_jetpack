@@ -11,6 +11,7 @@ import com.example.myapplication.mgr.PdfItextUtil
 import com.example.myapplication.model.Artical
 import com.example.myapplication.model.BookAllSize
 import com.example.myapplication.model.ProgressData
+import com.example.myapplication.util.LoginPreferencesProvider
 import io.reactivex.Completable
 import io.reactivex.CompletableObserver
 import io.reactivex.SingleObserver
@@ -20,9 +21,21 @@ import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import javax.inject.Inject
 
-class BookDownloadRepository {
 
+class BookDownloadRepository @Inject constructor(
+
+) : BookContract.Repo {
+
+    var mLoginPreferencesProvider: LoginPreferencesProvider? = null
+        @Inject set
+    var lofterParser: LofterParser? = null
+        @Inject set
+    var czBookParser: CzBookParser? = null
+        @Inject set
+//    val lofterParser = LofterParser()
+//    val czBookParser = CzBookParser()
     private var _artical = MutableLiveData(Artical("", "", "", "", "", listOf()))
     val artical: MutableLiveData<Artical> = _artical
 
@@ -33,12 +46,13 @@ class BookDownloadRepository {
     private var _progress = MutableLiveData(ProgressData())
     val progress: MutableLiveData<ProgressData> = _progress
 
-    fun parseLofterAndSave(url: String, context: Context) {
-        Log.e("onCreate", "parseLofterAndSave: $url" )
-        LofterParser().getLofterParserData(url)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : SingleObserver<Artical> {
+
+    override fun parseLofterAndSave(url: String, context: Context) {
+        Log.e("onCreate", "parseLofterAndSave: $url")
+        lofterParser?.getLofterParserData(url)
+            ?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe(object : SingleObserver<Artical> {
                 override fun onSuccess(t: Artical) {
                     Log.d("onCreate", "parseLofterAndSave$t")
                     _artical.postValue(t)
@@ -80,9 +94,9 @@ class BookDownloadRepository {
 
     }
 
-    fun parseCzBooksAndSave(url: String = "") {
+    override fun parseCzBooksAndSave(url: String) {
         Log.e("onCreate", "parseCzBooksAndSave: $url")
-        CzBookParser().getCzBooksParserData(url = url)
+        czBookParser!!.getCzBooksParserData(url = url)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : SingleObserver<Artical> {
@@ -120,8 +134,8 @@ class BookDownloadRepository {
             })
     }
 
-    fun parseNovelAllBooksAndSave(url: String) {
-        CzBookParser().getCzBookAllBookData(url)
+    override fun parseNovelAllBooksAndSave(url: String) {
+        czBookParser!!.getCzBookAllBookData(url)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : SingleObserver<List<String>> {
@@ -168,11 +182,10 @@ class BookDownloadRepository {
             })
     }
 
-
-    fun parseNovelOneBookAndSave(wh: List<String>, nowInt: Int = 0) {
+    override fun parseNovelOneBookAndSave(wh: List<String>, nowInt: Int) {
         var finalInt = nowInt;
         var isEnd = false
-        CzBookParser().getCzBookAllBookParseData(wh, finalInt, isEnd)
+        czBookParser!!.getCzBookAllBookParseData(wh, finalInt, isEnd)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : SingleObserver<Artical> {
@@ -237,7 +250,7 @@ class BookDownloadRepository {
     }
 
 
-    fun saveToFileRx(t: Artical) {
+    private fun saveToFileRx(t: Artical) {
         saveToFile(t)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -259,29 +272,7 @@ class BookDownloadRepository {
             })
     }
 
-    //   saveToFile(ar)
-//                                .subscribeOn(Schedulers.io())
-//                                .observeOn(AndroidSchedulers.mainThread())
-//                                .subscribe(object : CompletableObserver {
-//                                    override fun onSubscribe(d: Disposable) {
-//                                        Log.d("onSubscribe", "onSubscribe  saveToFile")
-//                                        setLoadText("儲存中", true)
-//                                    }
-//
-//                                    override fun onError(e: Throwable) {
-//                                        Log.d("onError", "onError  saveToFile" + e)
-//                                        setLoadText("儲存失敗", true)
-//                                        dismissProgressBar()
-//                                    }
-//
-//                                    override fun onComplete() {
-//                                        Log.d("onComplete", "onComplete  saveToFile")
-//                                        setLoadText("儲存中", false)
-//                                        dismissProgressBar()
-//                                    }
-//
-//                                })
-    fun saveToFile(t: Artical): Completable {
+    private fun saveToFile(t: Artical): Completable {
         val name = t.title + ".txt"
 //        val filePath = "/storage/emulated/0/DCIM"
         val filePath: String =
@@ -310,7 +301,6 @@ class BookDownloadRepository {
             }
         }
     }
-
 
     private fun saveToWordRx(t: Artical, context: Context) {
         saveToWord(t, context)
@@ -359,7 +349,7 @@ class BookDownloadRepository {
                     val filePath: String =
                         (Environment.getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS).path) + "/books/"
 
-                    Log.e("onCreate", "saveToWord: $t", )
+                    Log.e("onCreate", "saveToWord: $t")
                     pdfItextUtil =
                         PdfItextUtil(context, filePath + t.title + ".pdf")
                             .addTitleToPdf(t.title)
@@ -384,26 +374,4 @@ class BookDownloadRepository {
 
     }
 
-//    saveToFile(t)
-//    .subscribeOn(Schedulers.io())
-//    .observeOn(AndroidSchedulers.mainThread())
-//    .subscribe(object : CompletableObserver {
-//        override fun onSubscribe(d: Disposable) {
-//            Log.d("onSubscribe", "onSubscribe  saveToFile")
-//            setLoadText("儲存中", true)
-//        }
-//
-//        override fun onError(e: Throwable) {
-//            Log.d("onError", "onError  saveToFile" + e)
-//            setLoadText("儲存失敗", true)
-//            dismissProgressBar()
-//        }
-//
-//        override fun onComplete() {
-//            Log.d("onComplete", "onComplete  saveToFile")
-//            setLoadText("儲存中", false)
-//            dismissProgressBar()
-//        }
-//
-//    })
 }

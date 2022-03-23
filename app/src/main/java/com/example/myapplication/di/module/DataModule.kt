@@ -7,8 +7,8 @@ import javax.inject.Singleton
 
 @Module
 class DataModule {
-    @Singleton
-    @Provides
-    fun providesRepository(): BookDownloadRepository =
-        BookDownloadRepository()
+//    @Singleton
+//    @Provides
+//    fun providesRepository(): BookDownloadRepository =
+//        BookDownloadRepository()
 }

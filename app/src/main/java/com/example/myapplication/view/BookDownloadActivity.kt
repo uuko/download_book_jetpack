@@ -1,6 +1,6 @@
 package com.example.myapplication.view
 
-import androidx.appcompat.app.AppCompatActivity
+import android.app.Application
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -8,21 +8,37 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import com.example.myapplication.App
 import com.example.myapplication.R
-import com.example.myapplication.repository.BookDownloadRepository
+import com.example.myapplication.di.component.book.BookComponent
+import com.example.myapplication.di.component.book.DaggerBookComponent
+import com.example.myapplication.di.module.book.BookModule
 import com.example.myapplication.viewmodel.BookDownloadViewModel
-import com.example.myapplication.viewmodel.BookDownloadViewModelFactory
-import org.w3c.dom.Text
+import javax.inject.Inject
+
 
 class BookDownloadActivity : AppCompatActivity() {
-    private val factory = BookDownloadViewModelFactory(BookDownloadRepository())
-    private val viewModel: BookDownloadViewModel by viewModels {
-        factory
-    }
+//    private val factory = BookDownloadViewModelFactory(BookDownloadRepository())
 
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel: BookDownloadViewModel by viewModels {
+        viewModelFactory
+    }
+    lateinit var mBookComponent: BookComponent
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_book_download)
+        mBookComponent = DaggerBookComponent.builder()
+            .bookModule(BookModule(this))
+            .applicationComponent((application as App).getApplicationComponent())
+            .build()
+        mBookComponent.inject(this)
+
+
         val submit: Button = findViewById(R.id.submit)
         val submitAll: Button = findViewById(R.id.submitAll)
         val inputText: TextView = findViewById(R.id.text)
@@ -59,7 +75,7 @@ class BookDownloadActivity : AppCompatActivity() {
 //                }
                 //
                 else {
-                    viewModel.parseLofterAndSave(url,this)
+                    viewModel.parseLofterAndSave(url, this)
                 }
             }
         }

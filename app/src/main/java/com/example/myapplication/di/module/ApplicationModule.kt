@@ -17,38 +17,38 @@ import javax.inject.Singleton
 
 @Module
 class ApplicationModule(app: App) {
-//    private var application: Application = app
-//
-//
-//    @Provides
-//    fun provideContext(): Context {
-//        return application.applicationContext
-//    }
-//
-//    @Provides
-//    fun provideApplication(): Application {
-//        return application
-//    }
-//
-//    @Provides
-//    fun provideSchedulerProvider(schedulerProviderImp: SchedulerProviderImp): SchedulerProvider {
-//        return schedulerProviderImp
-//    }
-//
-//    @Provides
-//    fun provideUIObservable(schedulerProvider: SchedulerProvider): Observable<Any> {
-//        return Observable.create(ObservableOnSubscribe<Any> { e -> e.onComplete() })
-//            .subscribeOn(schedulerProvider.io()).observeOn(schedulerProvider.ui())
-//    }
-//
-//    @Provides
-//    fun provideCompositeDisposable(): CompositeDisposable {
-//        return CompositeDisposable()
-//    }
+    private var application: Application = app
 
-//    @Provides
-//    @Singleton
-//    fun provideLoginPreferencesProvider(loginPreferences: LoginPreferences): LoginPreferencesProvider {
-//        return loginPreferences
-//    }
+
+    @Provides
+    fun provideContext(): Context {
+        return application.applicationContext
+    }
+
+    @Provides
+    fun provideApplication(): Application {
+        return application
+    }
+
+    @Provides
+    fun provideSchedulerProvider(schedulerProviderImp: SchedulerProviderImp): SchedulerProvider {
+        return schedulerProviderImp
+    }
+
+    @Provides
+    fun provideUIObservable(schedulerProvider: SchedulerProvider): Observable<Any> {
+        return Observable.create(ObservableOnSubscribe<Any> { e -> e.onComplete() })
+            .subscribeOn(schedulerProvider.io()).observeOn(schedulerProvider.ui())
+    }
+
+    @Provides
+    fun provideCompositeDisposable(): CompositeDisposable {
+        return CompositeDisposable()
+    }
+
+    @Provides
+    @Singleton
+    fun provideLoginPreferencesProvider(loginPreferences: LoginPreferences): LoginPreferencesProvider {
+        return loginPreferences
+    }
 }

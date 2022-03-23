@@ -2,30 +2,28 @@ package com.example.myapplication
 
 import android.app.Application
 import com.example.myapplication.di.component.ApplicationComponent
+import com.example.myapplication.di.component.DaggerApplicationComponent
 import com.example.myapplication.di.module.ApplicationModule
+import com.example.myapplication.di.module.MgrModule
 import dagger.android.DaggerApplication
 
 
 class App : Application(){
-//    private var mApplicationComponent: ApplicationComponent = null
+   private lateinit var mApplicationComponent:ApplicationComponent
 
 
     override fun onCreate() {
         super.onCreate()
 
-//        mApplicationComponent = DaggerApplicationComponent.builder()
-//            .applicationModule(ApplicationModule(this))
-//            .aPIModule(APIModule())
-//            .printerModule(PrinterModule())
-//            .fTPModule(FTPModule())
-//            .socketModule(SocketModule())
-//            .notTransferModule(NotTransferModule())
-//            .build()
-//        mApplicationComponent!!.inject(this)
+        mApplicationComponent = DaggerApplicationComponent.builder()
+            .applicationModule(ApplicationModule(this))
+            .mgrModule(MgrModule())
+            .build()
+        mApplicationComponent!!.inject(this)
     }
 
-//    fun getApplicationComponent(): ApplicationComponent {
-//        return mApplicationComponent
-//    }
+    fun getApplicationComponent(): ApplicationComponent {
+        return mApplicationComponent
+    }
 
 }

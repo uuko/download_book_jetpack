@@ -19,22 +19,22 @@ class BookDownloadViewModel @Inject constructor(private val dataModel: BookDownl
 
     fun parseCzBooksAndSave(url: String = "",folder:String="book") {
         Log.e("onCreate", "getAritcal: ")
-        dataModel.parseCzBooksAndSave(url)
+        dataModel.parseCzBooksAndSave(url,folder)
     }
 
     fun parseNovelAllBooksAndSave(url: String = "",folder:String="book") {
         Log.e("onCreate", "VM == parseNovelAllBooksAndSave: ")
-        dataModel.parseNovelAllBooksAndSave(url = url)
+        dataModel.parseNovelAllBooksAndSave(url = url,folder)
     }
 
     fun parseNovelOneBookAndSave(wh: List<String>,folder:String="book") {
         Log.e("onCreate", "VM == parseNovelOneBookAndSave: ")
-        dataModel.parseNovelOneBookAndSave(wh)
+        dataModel.parseNovelOneBookAndSave(wh,0,folder)
     }
 
 
     fun parseLofterAndSave(url: String = "",context: Context,folder:String="lofter"){
-        dataModel.parseLofterAndSave(url,context)
+        dataModel.parseLofterAndSave(url,context,folder)
     }
 
 

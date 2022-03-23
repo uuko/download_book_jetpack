@@ -58,7 +58,7 @@ class BookDownloadRepository @Inject constructor(
                     Log.d("onCreate", "parseLofterAndSave$t   folder   $folder")
                     _artical.postValue(t)
 //                    saveToWordRx(t, context)
-                    saveToFileRx(t,folder)
+                    saveToFileRx(t,folder,0)
 
                     _progress.postValue(
                         ProgressData(
@@ -110,7 +110,7 @@ class BookDownloadRepository @Inject constructor(
                             show = false
                         )
                     )
-                    saveToFileRx(t,folder)
+                    saveToFileRx(t,folder,1)
                 }
 
                 override fun onSubscribe(d: Disposable) {
@@ -214,7 +214,7 @@ class BookDownloadRepository @Inject constructor(
                         }
                         else -> {
                             finalInt = 0
-                            saveToFileRx(ar,folder)
+                            saveToFileRx(ar,folder,1)
                         }
                     }
 
@@ -247,8 +247,8 @@ class BookDownloadRepository @Inject constructor(
     }
 
 
-    private fun saveToFileRx(t: Artical, folder: String ) {
-        saveToFile(t,folder = folder)
+    private fun saveToFileRx(t: Artical, folder: String , type:Int=0) {
+        saveToFile(t,folder = folder,type = type)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : CompletableObserver {
@@ -269,10 +269,17 @@ class BookDownloadRepository @Inject constructor(
             })
     }
 
-    private fun saveToFile(t: Artical, folder: String ): Completable {
+    private fun saveToFile(t: Artical, folder: String , type:Int=0): Completable {
         var name = t.author + ".txt"
-        if (name.contains("】"))
-            name=name.split("】")[0]+".txt"
+        if (type==0){
+            name=t.title + ".txt"
+        }
+        else{
+            if (name.contains("】"))
+                name=name.split("】")[0] +"】.txt"
+        }
+
+
 //        val filePath = "/storage/emulated/0/DCIM"
 //        + folder
 //        + folder

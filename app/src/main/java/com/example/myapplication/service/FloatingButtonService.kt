@@ -10,6 +10,7 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
+import android.util.Log
 import android.view.*
 import android.widget.Button
 
@@ -34,6 +35,7 @@ class FloatingButtonService : Service() {
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onBind(p0: Intent?): IBinder? {
+        Log.e("onCreate", "onBind: ", )
         initWindows()
         showFloating()
         return MyBinder()
@@ -46,6 +48,7 @@ class FloatingButtonService : Service() {
     }
 
     private fun initWindows(){
+        Log.e("onCreate", "initWindows: ", )
         isStart=true
         windowsManager= getSystemService(Context.WINDOW_SERVICE) as WindowManager;
         layoutParams=WindowManager.LayoutParams()

@@ -54,12 +54,8 @@ class BookDownloadActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_book_download)
-        mBookComponent = DaggerBookComponent.builder()
-            .bookModule(BookModule(this))
-            .applicationComponent((application as App).getApplicationComponent())
-            .build()
-        mBookComponent.inject(this)
 
+        initView()
         initPermission()
 
 
@@ -67,21 +63,6 @@ class BookDownloadActivity : AppCompatActivity() {
         floatBtn.setOnClickListener { startFloatingButtonService() }
 
 
-        folderText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                location.text = "download/$p0"
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-
-            }
-
-
-        })
 
         viewModel.bookAllSize.observe(this) {
 
@@ -105,6 +86,16 @@ class BookDownloadActivity : AppCompatActivity() {
             Log.e("onCreate", " viewModel.progress.observe:  ${it.text}")
             loadText.text = it.text
         }
+
+
+    }
+
+    private fun initView() {
+        mBookComponent = DaggerBookComponent.builder()
+            .bookModule(BookModule(this))
+            .applicationComponent((application as App).getApplicationComponent())
+            .build()
+        mBookComponent.inject(this)
 
 
 
@@ -155,6 +146,23 @@ class BookDownloadActivity : AppCompatActivity() {
                 }
             }
         }
+
+
+        folderText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                location.text = "download/$p0"
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+
+            }
+
+
+        })
 
     }
 
@@ -254,6 +262,7 @@ class BookDownloadActivity : AppCompatActivity() {
     fun startFloatingButtonService() {
         val floatingButtonService = FloatingButtonService()
         if (floatingButtonService.getStart()) {
+            Log.e("onCreate", "floatingButtonService.getStart: ", )
             return
         }
         if (!Settings.canDrawOverlays(this)) {
@@ -265,20 +274,24 @@ class BookDownloadActivity : AppCompatActivity() {
                 ), 0
             )
         } else {
-            //startService(Intent(this@MainActivity, FloatingButtonService::class.java))
+            Log.e("onCreate", "floatingButtonService.bindService: ", )
+//            startService(Intent(this, FloatingButtonService::class.java))
             val intent = Intent(this, FloatingButtonService::class.java)
             hasBind = bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
         }
     }
 
-    private var mServiceConnection: ServiceConnection = object : ServiceConnection {
+    internal var mServiceConnection: ServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             val binder = service as FloatingButtonService.MyBinder
+            Log.e("onCreate", "floatingButtonService.onServiceConnected: ", )
             binder.getServces()
         }
 
-        override fun onServiceDisconnected(name: ComponentName) {}
+        override fun onServiceDisconnected(name: ComponentName) {
+            Log.e("onCreate", "floatingButtonService.onServiceDisconnected: ", )
+        }
     }
 
 }

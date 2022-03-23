@@ -2,6 +2,7 @@ package com.example.myapplication.di.module
 
 import com.example.myapplication.mgr.CzBookParser
 import com.example.myapplication.mgr.LofterParser
+import com.example.myapplication.mgr.PermissionMgr
 import com.example.myapplication.repository.BookDownloadRepository
 import dagger.Module
 import dagger.Provides
@@ -20,5 +21,9 @@ class MgrModule {
     fun providesLofterParser(): LofterParser =
         LofterParser()
 
+    @Singleton
+    @Provides
+    fun providesPermissionMgr(): PermissionMgr =
+        PermissionMgr()
 
 }

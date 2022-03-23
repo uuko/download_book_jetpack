@@ -7,6 +7,7 @@ import com.example.myapplication.api.ApiService
 import com.example.myapplication.di.module.*
 import com.example.myapplication.mgr.CzBookParser
 import com.example.myapplication.mgr.LofterParser
+import com.example.myapplication.mgr.PermissionMgr
 import com.example.myapplication.util.LoginPreferencesProvider
 import com.example.myapplication.util.SchedulerProvider
 import com.example.myapplication.viewmodel.BookDownloadViewModel
@@ -48,6 +49,8 @@ interface ApplicationComponent  {
     fun getCzBookParser(): CzBookParser
 
     fun getLofterParser(): LofterParser
+
+    fun getPermissionMgr(): PermissionMgr
 
     fun getViewModelFactory(): ViewModelProvider.Factory
 

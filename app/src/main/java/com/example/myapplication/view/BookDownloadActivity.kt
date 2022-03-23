@@ -32,6 +32,8 @@ import com.example.myapplication.R
 import com.example.myapplication.di.component.book.BookComponent
 import com.example.myapplication.di.component.book.DaggerBookComponent
 import com.example.myapplication.di.module.book.BookModule
+import com.example.myapplication.mgr.CzBookParser
+import com.example.myapplication.mgr.PermissionMgr
 import com.example.myapplication.service.FloatingButtonService
 import com.example.myapplication.viewmodel.BookDownloadViewModel
 import kotlinx.android.synthetic.main.activity_book_download.*
@@ -39,14 +41,20 @@ import javax.inject.Inject
 
 
 class BookDownloadActivity : AppCompatActivity() {
-//    private val factory = BookDownloadViewModelFactory(BookDownloadRepository())
-
-
+    //    private val factory = BookDownloadViewModelFactory(BookDownloadRepository())
+//    viewmodel
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: BookDownloadViewModel by viewModels {
         viewModelFactory
     }
+
+
+    //    permissionMgr
+
+    var permissionMgr: PermissionMgr? = null
+        @Inject set
+
     private var hasBind = false
     lateinit var mBookComponent: BookComponent
 
@@ -54,15 +62,8 @@ class BookDownloadActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_book_download)
-
         initView()
         initPermission()
-
-
-
-        floatBtn.setOnClickListener { startFloatingButtonService() }
-
-
 
         viewModel.bookAllSize.observe(this) {
 
@@ -90,15 +91,13 @@ class BookDownloadActivity : AppCompatActivity() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun initView() {
         mBookComponent = DaggerBookComponent.builder()
             .bookModule(BookModule(this))
             .applicationComponent((application as App).getApplicationComponent())
             .build()
         mBookComponent.inject(this)
-
-
-
         submit.setOnClickListener {
             val url = inputText.text.toString()
             if (url.isNotEmpty()) {
@@ -124,7 +123,6 @@ class BookDownloadActivity : AppCompatActivity() {
                 }
             }
         }
-
         submitAll.setOnClickListener {
             val url = inputText.text.toString()
             if (url.isNotEmpty()) {
@@ -146,8 +144,6 @@ class BookDownloadActivity : AppCompatActivity() {
                 }
             }
         }
-
-
         folderText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
@@ -163,48 +159,12 @@ class BookDownloadActivity : AppCompatActivity() {
 
 
         })
-
+        floatBtn.setOnClickListener { startFloatingButtonService() }
     }
 
     private fun initPermission() {
-        if (!checkPermission()) {
-            requestPermission()
-        }
-
-    }
-
-
-    private fun checkPermission(): Boolean {
-        return if (SDK_INT >= Build.VERSION_CODES.R) {
-            Environment.isExternalStorageManager()
-        } else {
-            val result =
-                ContextCompat.checkSelfPermission(this, READ_EXTERNAL_STORAGE)
-            val result1 =
-                ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE)
-            result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED
-        }
-    }
-
-    private fun requestPermission() {
-        if (SDK_INT >= Build.VERSION_CODES.R) {
-            try {
-                val intent = Intent(ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                intent.addCategory("android.intent.category.DEFAULT")
-                intent.data = Uri.parse(String.format("package:%s", applicationContext.packageName))
-                startActivityForResult(intent, 2296)
-            } catch (e: Exception) {
-                val intent = Intent()
-                intent.action = ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
-                startActivityForResult(intent, 2296)
-            }
-        } else {
-            //below android 11
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(WRITE_EXTERNAL_STORAGE),
-                2297
-            )
+        if (!permissionMgr?.checkPermission(this)!!) {
+            permissionMgr?.requestPermission(this)
         }
     }
 
@@ -262,7 +222,7 @@ class BookDownloadActivity : AppCompatActivity() {
     fun startFloatingButtonService() {
         val floatingButtonService = FloatingButtonService()
         if (floatingButtonService.getStart()) {
-            Log.e("onCreate", "floatingButtonService.getStart: ", )
+            Log.e("onCreate", "floatingButtonService.getStart: ")
             return
         }
         if (!Settings.canDrawOverlays(this)) {
@@ -274,23 +234,22 @@ class BookDownloadActivity : AppCompatActivity() {
                 ), 0
             )
         } else {
-            Log.e("onCreate", "floatingButtonService.bindService: ", )
-//            startService(Intent(this, FloatingButtonService::class.java))
+            Log.e("onCreate", "floatingButtonService.bindService: ")
             val intent = Intent(this, FloatingButtonService::class.java)
             hasBind = bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
         }
     }
 
-    internal var mServiceConnection: ServiceConnection = object : ServiceConnection {
+    private var mServiceConnection: ServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             val binder = service as FloatingButtonService.MyBinder
-            Log.e("onCreate", "floatingButtonService.onServiceConnected: ", )
+            Log.e("onCreate", "floatingButtonService.onServiceConnected: ")
             binder.getServces()
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
-            Log.e("onCreate", "floatingButtonService.onServiceDisconnected: ", )
+            Log.e("onCreate", "floatingButtonService.onServiceDisconnected: ")
         }
     }
 

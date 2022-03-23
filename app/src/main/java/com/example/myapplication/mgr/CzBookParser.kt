@@ -5,8 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import com.example.myapplication.model.Artical
 import io.reactivex.Single
 import org.jsoup.Jsoup
+import javax.inject.Inject
 
-class CzBookParser {
+class CzBookParser @Inject constructor() {
 //    private var artical: MutableLiveData<Artical> = MutableLiveData()
 //    private var instance: CzBookParser = CzBookParser()
 //

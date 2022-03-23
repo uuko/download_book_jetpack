@@ -6,8 +6,9 @@ import com.example.myapplication.model.Artical
 import io.reactivex.Single
 import org.jsoup.Jsoup
 import java.lang.Exception
+import javax.inject.Inject
 
-class LofterParser() {
+class LofterParser @Inject constructor() {
     private var artical: MutableLiveData<Artical> = MutableLiveData()
 
     fun getLofterParserData(url: String): Single<Artical> {

@@ -191,6 +191,7 @@ class BookDownloadRepository @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : SingleObserver<Artical> {
                 override fun onSuccess(ar: Artical) {
+                    Log.e("onCreate", "parseNovelOneBookAndSave: {${ar.title}}  --  {${ar.author}} ", )
                     Log.d("onCreate", "onSuccess   folder $folder  OneBookAndSave $wh  ")
                     _artical.postValue(ar)
                     _progress.postValue(
@@ -269,7 +270,9 @@ class BookDownloadRepository @Inject constructor(
     }
 
     private fun saveToFile(t: Artical, folder: String ): Completable {
-        val name = t.title + ".txt"
+        var name = t.author + ".txt"
+        if (name.contains("】"))
+            name=name.split("】")[0]+".txt"
 //        val filePath = "/storage/emulated/0/DCIM"
 //        + folder
 //        + folder

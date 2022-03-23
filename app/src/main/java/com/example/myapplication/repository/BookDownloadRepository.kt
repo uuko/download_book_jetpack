@@ -204,12 +204,12 @@ class BookDownloadRepository @Inject constructor(
                             finalInt++
 
                             isEnd = false
-                            parseNovelOneBookAndSave(wh, finalInt)
+                            parseNovelOneBookAndSave(wh, finalInt,folder)
                         }
                         finalInt == wh.size - 2 -> {
                             finalInt++
                             isEnd = true
-                            parseNovelOneBookAndSave(wh, finalInt)
+                            parseNovelOneBookAndSave(wh, finalInt,folder)
                         }
                         else -> {
                             finalInt = 0

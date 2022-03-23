@@ -48,7 +48,7 @@ class BookDownloadRepository @Inject constructor(
     val progress: MutableLiveData<ProgressData> = _progress
 
 
-    override fun parseLofterAndSave(url: String, context: Context,folder:String) {
+    override fun parseLofterAndSave(url: String, context: Context, folder: String) {
         Log.e("onCreate", "parseLofterAndSave: $url")
         lofterParser?.getLofterParserData(url)
             ?.subscribeOn(Schedulers.io())
@@ -58,7 +58,7 @@ class BookDownloadRepository @Inject constructor(
                     Log.d("onCreate", "parseLofterAndSave$t   folder   $folder")
                     _artical.postValue(t)
 //                    saveToWordRx(t, context)
-                    saveToFileRx(t,folder,0)
+                    saveToFileRx(t, folder, 0)
 
                     _progress.postValue(
                         ProgressData(
@@ -95,7 +95,7 @@ class BookDownloadRepository @Inject constructor(
 
     }
 
-    override fun parseCzBooksAndSave(url: String,folder:String) {
+    override fun parseCzBooksAndSave(url: String, folder: String) {
         Log.e("onCreate", "parseCzBooksAndSave: $url")
         czBookParser!!.getCzBooksParserData(url = url)
             .subscribeOn(Schedulers.io())
@@ -110,7 +110,7 @@ class BookDownloadRepository @Inject constructor(
                             show = false
                         )
                     )
-                    saveToFileRx(t,folder,1)
+                    saveToFileRx(t, folder, 1)
                 }
 
                 override fun onSubscribe(d: Disposable) {
@@ -135,7 +135,7 @@ class BookDownloadRepository @Inject constructor(
             })
     }
 
-    override fun parseNovelAllBooksAndSave(url: String,folder:String) {
+    override fun parseNovelAllBooksAndSave(url: String, folder: String) {
         czBookParser!!.getCzBookAllBookData(url)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -183,7 +183,7 @@ class BookDownloadRepository @Inject constructor(
             })
     }
 
-    override fun parseNovelOneBookAndSave(wh: List<String>, nowInt: Int,folder:String) {
+    override fun parseNovelOneBookAndSave(wh: List<String>, nowInt: Int, folder: String) {
         var finalInt = nowInt;
         var isEnd = false
         czBookParser!!.getCzBookAllBookParseData(wh, finalInt, isEnd)
@@ -191,7 +191,10 @@ class BookDownloadRepository @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : SingleObserver<Artical> {
                 override fun onSuccess(ar: Artical) {
-                    Log.e("onCreate", "parseNovelOneBookAndSave: {${ar.title}}  --  {${ar.author}} ", )
+                    Log.e(
+                        "onCreate",
+                        "parseNovelOneBookAndSave: {${ar.title}}  --  {${ar.author}} ",
+                    )
                     Log.d("onCreate", "onSuccess   folder $folder  OneBookAndSave $wh  ")
                     _artical.postValue(ar)
                     _progress.postValue(
@@ -205,16 +208,16 @@ class BookDownloadRepository @Inject constructor(
                             finalInt++
 
                             isEnd = false
-                            parseNovelOneBookAndSave(wh, finalInt,folder)
+                            parseNovelOneBookAndSave(wh, finalInt, folder)
                         }
                         finalInt == wh.size - 2 -> {
                             finalInt++
                             isEnd = true
-                            parseNovelOneBookAndSave(wh, finalInt,folder)
+                            parseNovelOneBookAndSave(wh, finalInt, folder)
                         }
                         else -> {
                             finalInt = 0
-                            saveToFileRx(ar,folder,1)
+                            saveToFileRx(ar, folder, 1)
                         }
                     }
 
@@ -247,8 +250,8 @@ class BookDownloadRepository @Inject constructor(
     }
 
 
-    private fun saveToFileRx(t: Artical, folder: String , type:Int=0) {
-        saveToFile(t,folder = folder,type = type)
+    private fun saveToFileRx(t: Artical, folder: String, type: Int = 0) {
+        saveToFile(t, folder = folder, type = type)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : CompletableObserver {
@@ -269,21 +272,20 @@ class BookDownloadRepository @Inject constructor(
             })
     }
 
-    private fun saveToFile(t: Artical, folder: String , type:Int=0): Completable {
+    private fun saveToFile(t: Artical, folder: String, type: Int = 0): Completable {
         var name = t.author + ".txt"
-        if (type==0){
-            name=t.title + ".txt"
-        }
-        else{
+        if (type == 0) {
+            name = t.title + ".txt"
+        } else {
             if (name.contains("】"))
-                name=name.split("】")[0] +"】.txt"
+                name = name.split("】")[0] + "】.txt"
         }
 
 
 //        val filePath = "/storage/emulated/0/DCIM"
 //        + folder
 //        + folder
-        Log.e("onCreate", "saveToFile: $folder", )
+        Log.e("onCreate", "saveToFile: $folder")
         val filePath: String =
             (Environment.getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS).path) + "/$folder"
         val dir = File(
@@ -292,7 +294,6 @@ class BookDownloadRepository @Inject constructor(
         );
         return Completable.create {
             run {
-
                 if (!dir.exists()) {
                     dir.mkdir();
                 }

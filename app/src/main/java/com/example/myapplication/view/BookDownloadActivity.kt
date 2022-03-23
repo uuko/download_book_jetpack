@@ -1,13 +1,19 @@
 package com.example.myapplication.view
 
-import android.app.Application
+import android.content.Intent
+import android.media.audiofx.BassBoost
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.App
@@ -29,6 +35,7 @@ class BookDownloadActivity : AppCompatActivity() {
         viewModelFactory
     }
     lateinit var mBookComponent: BookComponent
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_book_download)
@@ -37,7 +44,13 @@ class BookDownloadActivity : AppCompatActivity() {
             .applicationComponent((application as App).getApplicationComponent())
             .build()
         mBookComponent.inject(this)
-
+        if (Environment.isExternalStorageManager()) {
+//            internal = File("/sdcard")
+//            internalContents = internal.listFiles()
+        } else {
+            val permissionIntent = Intent(ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+            startActivity(permissionIntent)
+        }
 
         val submit: Button = findViewById(R.id.submit)
         val submitAll: Button = findViewById(R.id.submitAll)
@@ -58,6 +71,8 @@ class BookDownloadActivity : AppCompatActivity() {
                 progress.visibility = View.GONE
 //                loadText.visibility = View.GONE
             }
+
+            Log.e("onCreate", " viewModel.progress.observe:  ${it.text}")
             loadText.text = it.text
         }
 

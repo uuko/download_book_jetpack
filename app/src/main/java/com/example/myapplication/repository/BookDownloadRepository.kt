@@ -192,26 +192,21 @@ class BookDownloadRepository @Inject constructor(
                 override fun onSuccess(ar: Artical) {
                     Log.d("onCreate", "onSuccess OneBookAndSave $wh")
                     _artical.postValue(ar)
+                    _progress.postValue(
+                        ProgressData(
+                            text = "下載第  $finalInt 章中",
+                            show = true
+                        )
+                    )
                     when {
                         finalInt < wh.size - 2 -> {
                             finalInt++
-                            _progress.postValue(
-                                ProgressData(
-                                    text = "下載第  $finalInt 章中",
-                                    show = true
-                                )
-                            )
+
                             isEnd = false
                             parseNovelOneBookAndSave(wh, finalInt)
                         }
                         finalInt == wh.size - 2 -> {
                             finalInt++
-                            _progress.postValue(
-                                ProgressData(
-                                    text = "下載第  $finalInt 章中",
-                                    show = true
-                                )
-                            )
                             isEnd = true
                             parseNovelOneBookAndSave(wh, finalInt)
                         }
@@ -228,7 +223,7 @@ class BookDownloadRepository @Inject constructor(
                     Log.d("onCreate", "OneBookAndSave onSubscribe")
                     _progress.postValue(
                         ProgressData(
-                            text = "載入中 parseNovelAllBooksAndSave",
+                            text = "下載第  $finalInt 章中",
                             show = true
                         )
                     )
